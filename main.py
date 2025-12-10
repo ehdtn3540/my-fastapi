@@ -6,6 +6,10 @@ app = FastAPI()
 def read_root():
     return {"message": "Hello FastAPI!"}
 
+@app.get("/test")
+def test():
+    return {"message": "Hello FastAPI! test"}
+
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: str | None = None):
     return {"item_id": item_id, "q": q}
