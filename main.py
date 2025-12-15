@@ -1,7 +1,11 @@
-from fastapi import FastAPI
-
-app = FastAPI()
+from fastapi import FastAPI, Depends, Query
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+import random
+
+app = FastAPI(title="Mini Guess Game API")
+
+
 
 @app.get("/")
 def read_root():
@@ -12,16 +16,56 @@ def test():
     return {"message": "Hello FastAPI! test"}
 
 # guess number up, down game
-SECRET = 42
-@app.get("/guess")
-def guess_number(num: int):
-    if num < SECRET:
-        return {"result": "UP!"}
-    elif num > SECRET:
-        return {"result": "DOWN!"}
-    return JSONResponse(content={"result": "정답!"}, media_type="application/json; charset=utf-8") # 한글 깨짐 방지 처리
+# SECRET = 42
+# @app.get("/guess")
+# def guess_number(num: int):
+#     if num < SECRET:
+#         return {"result": "UP!"}
+#     elif num > SECRET:
+#         return {"result": "DOWN!"}
+#     return JSONResponse(content={"result": "정답!"}, media_type="application/json; charset=utf-8") # 한글 깨짐 방지 처리
+
+# guess random number up&down game upgrade
+SECRET = 0 # 전역변수 초기화
+# 요청 Body 스키마(Body 검증)
+class GuessRequest(BaseModel):
+    number: int
+
+# 의존성 (게임 상태 제공)
+def get_secret_number():
+	global SECRET
+	if SECRET == 0: # 0일 경우 secret(정답)
+		random_number = random.randint(1, 100) # 랜덤 값(정답) 초기화
+		SECRET = random_number # 전역 변수에 저장
+	else: # secret(정답) 값이 있을 경우 값 유지
+		random_number = SECRET
+	return random_number
+
+# API
+@app.post("/guess")
+def guess_number(
+    guess: GuessRequest, # Body 자동 검증
+    secret: int = Depends(get_secret_number), # 의존성 주입
+    user: str = Query(..., description="플레이어 이름") # 쿼리 파라미터 사용
+):
+	global SECRET
+	if guess.number < secret:
+		result = "UP"
+	elif guess.number > secret:
+		result = "DOWN"
+	else:
+		result = "정답 🎉"
+		SECRET = 0
+
+	return {
+		"user": user,
+		"guess": guess.number,
+		"result": result,
+		"answer": secret
+    }
 
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: str | None = None):
     return {"item_id": item_id, "q": q}
+
 
