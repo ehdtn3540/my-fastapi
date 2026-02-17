@@ -1,11 +1,24 @@
 from fastapi import FastAPI, Depends, Query
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 import random
 
 app = FastAPI(title="Mini Guess Game API")
 
+# CORS 설정: Next.js(3000번 포트)로부터의 요청을 허용합니다
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"], # Next.js 주소
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
+
+@app.get("/api/test")
+async def test_connection():
+    return {"status": "success", "message": "FastAPI와 연결되었습니다!"}
 
 @app.get("/")
 def read_root():
