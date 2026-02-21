@@ -19,18 +19,26 @@ app.add_middleware(
 
 @app.get("/api/test")
 async def test_connection():
+    return {
+        "status": "success", 
+        "message": "FastAPI와 연결되었습니다!"
+	}
+
+
+@app.get("/api/jsonplaceholder")
+async def jsonplaceholder_connection():
     url = "https://jsonplaceholder.typicode.com/posts/1"
 
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
         response = response.json()
 
-    connection_result = {
-        "status": "success", 
-        "message": "FastAPI와 연결되었습니다!"
-	}
-
     return response
+
+
+
+
+
 
 
 
