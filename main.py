@@ -25,9 +25,10 @@ async def test_connection():
 	}
 
 
-@app.get("/api/jsonplaceholder")
-async def jsonplaceholder_connection():
-    url = "https://jsonplaceholder.typicode.com/posts/1"
+# JsonPlaceHolder API
+@app.get("/api/posts")
+async def getPosts():
+    url = "https://jsonplaceholder.typicode.com/posts"
 
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
