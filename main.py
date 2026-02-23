@@ -2,10 +2,25 @@ from fastapi import FastAPI, Depends, Query
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 import random
 import httpx
 
-app = FastAPI(title="Mini Guess Game API")
+
+# 공유할 클라이언트를 담을 클래스 혹은 변수
+class HttpClient:
+    client: httpx.AsyncClient = None
+
+http_client = HttpClient()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # [App 시작] 클라이언트 생성 (커넥션 풀 시작)
+    http_client.client = httpx.AsyncClient(base_url="https://api.example.com")
+    yield
+    await http_client.client.aclose() # [App 종료] 클라이언트 닫기
+
+app = FastAPI(title="Mini Guess Game API", lifespan=lifespan)
 
 # CORS 설정: Next.js(3000번 포트)로부터의 요청을 허용합니다
 app.add_middleware(
@@ -30,9 +45,8 @@ async def test_connection():
 async def getPosts():
     url = "https://jsonplaceholder.typicode.com/posts"
 
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-        response = response.json()
+    response = await http_client.client.get(url)
+    response = response.json()
 
     return response
 
@@ -41,11 +55,17 @@ async def getPosts():
 async def getPosts():
     url = "https://jsonplaceholder.typicode.com/comments"
 
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-        response = response.json()
+    response = await http_client.client.get(url)
+    response = response.json()
 
     return response
+
+
+
+
+
+
+
 
 
 
