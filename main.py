@@ -37,9 +37,15 @@ async def getPosts():
     return response
 
 
+@app.get("/api/comments")
+async def getPosts():
+    url = "https://jsonplaceholder.typicode.com/comments"
 
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+        response = response.json()
 
-
+    return response
 
 
 
