@@ -61,6 +61,14 @@ async def getPosts():
     return response
 
 
+@app.get("/api/users")
+async def getUsers():
+    url = "https://jsonplaceholder.typicode.com/users"
+
+    response = await http_client.client.get(url)
+    response = response.json()
+
+    return response
 
 
 
