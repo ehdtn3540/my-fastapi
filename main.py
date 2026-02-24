@@ -52,7 +52,7 @@ async def getPosts():
 
 
 @app.get("/api/comments")
-async def getPosts():
+async def getComments():
     url = "https://jsonplaceholder.typicode.com/comments"
 
     response = await http_client.client.get(url)
