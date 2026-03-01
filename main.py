@@ -1,7 +1,8 @@
-from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from fastapi.middleware.cors import CORSMiddleware
+
 import httpx
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from core.clients import http_client # 공유 클라이언트 임포트
 from routers import external, game  # 작성한 라우터들 임포트
@@ -16,13 +17,13 @@ async def lifespan(app: FastAPI):
 # FastAPI 앱 객체 생성
 app = FastAPI(title="Mini Guess Game API", lifespan=lifespan)
 
-# CORS 설정
+# CORS 설정(교차 출처 허용 설정)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"], # 3000번 포트(Next.js) 요청 허용
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_credentials=True,                  # 자격 증명 허용
+    allow_methods=["*"],                     # 모든 HTTP 메서드 허용
+    allow_headers=["*"],                     # 모든 헤더 허용
 )
 
 # 라우터 등록 (파일별로 분리한 기능을 연결)
