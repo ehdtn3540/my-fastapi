@@ -31,11 +31,6 @@ app.include_router(external.router)
 app.include_router(game.router)
 
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello FastAPI!"}
-
-
 @app.get("/api/test")
 async def test_connection():
     return {"status": "success", "message": "FastAPI와 연결되었습니다!"}
