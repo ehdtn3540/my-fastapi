@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from core.clients import http_client
 
 # JsonPlaceHolder API
-router = APIRouter(prefix="/api", tags=["external"])
+router = APIRouter(prefix="/jsonplaceholder", tags=["jsonplaceholder"])
 
 @router.get("/posts")
 async def get_posts():
