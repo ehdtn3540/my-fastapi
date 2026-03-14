@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from core.clients import http_client
+import asyncio
 
 # JsonPlaceHolder API
 router = APIRouter(prefix="/jsonplaceholder", tags=["jsonplaceholder"])
@@ -21,9 +22,11 @@ async def get_users():
 
 @router.get("/combined_posts")
 async def get_combined_posts():
-    posts    = await get_posts()
-    comments = await get_comments()
-    users    = await get_users()
+    posts, comments, users = await asyncio.gather(
+        get_posts(),
+        get_comments(),
+        get_users()
+    )
 
     combined_list = []
     for post in posts:
