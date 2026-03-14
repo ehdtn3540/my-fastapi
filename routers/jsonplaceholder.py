@@ -26,8 +26,15 @@ async def get_combined_posts():
     users    = await get_users()
 
     combined_list = []
-    combined_list.append(posts[0])
-    combined_list.append(comments[0])
-    combined_list.append(users[0])
+    for post in posts:
+        post_comments = []
+        for comment in comments:
+            if post.get("id") == comment.get("postId"):
+                post_comments.append(comment)
+        for user in users:
+            if post.get("userId") == user.get("id"):
+                post["user"] = user
+        post["comments"] = post_comments
+        combined_list.append(post)
 
     return combined_list
