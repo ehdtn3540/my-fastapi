@@ -28,16 +28,22 @@ async def get_combined_posts():
         get_users()
     )
 
+    # User의 ID를 기준으로 매핑 
+    user_map = {user['id']: user for user in users}
+
+    # Comment의 ID를 기준으로 매핑
+    comment_map = {}
+    for comment in comments:
+        post_id = comment.get('postId')
+        if post_id not in comment_map:
+            comment_map[post_id] = []
+        comment_map[post_id].append(comment)
+
+    # Post에 각각 User, Comment 정보 매칭 
     combined_list = []
     for post in posts:
-        post_comments = []
-        for comment in comments:
-            if post.get("id") == comment.get("postId"):
-                post_comments.append(comment)
-        for user in users:
-            if post.get("userId") == user.get("id"):
-                post["user"] = user
-        post["comments"] = post_comments
+        post["user"] = user_map.get(post.get("userId"))
+        post["comments"] = comment_map.get(post.get("id"), [])
         combined_list.append(post)
 
     return combined_list
