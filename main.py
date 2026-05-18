@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.clients import http_client # 공유 클라이언트 임포트
-from routers import system, jsonplaceholder, game  # 작성한 라우터들 임포트
+from routers import system, jsonplaceholder, game, stock  # 작성한 라우터들 임포트
 
 # 생명주기 관리
 @asynccontextmanager
@@ -30,4 +30,5 @@ app.add_middleware(
 app.include_router(system.router)
 app.include_router(jsonplaceholder.router)
 app.include_router(game.router)
+app.include_router(stock.router)
 
