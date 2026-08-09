@@ -31,3 +31,4 @@ def guess_number(
         SECRET = 0
 
     return {"user": user, "guess": guess.number, "result": result, "answer": secret}
+
