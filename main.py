@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.clients import http_client # 공유 클라이언트 임포트
-from routers import stock  # 작성한 라우터들 임포트
+from routers import stock, weather  # 작성한 라우터들 임포트
 
 # 생명주기 관리
 @asynccontextmanager
@@ -15,7 +15,7 @@ async def lifespan(app: FastAPI):
     await http_client.client.aclose() # HTTP 클라이언트 종료
 
 # FastAPI 앱 객체 생성
-app = FastAPI(title="Guts Stock", lifespan=lifespan)
+app = FastAPI(title="Guts Toy", lifespan=lifespan)
 
 # CORS 설정(교차 출처 허용 설정)
 app.add_middleware(
@@ -26,6 +26,7 @@ app.add_middleware(
     allow_headers=["*"],                     # 모든 헤더 허용
 )
 
-# 라우터 등록 (파일별로 분리한 기능을 연결)
+# 라우터 등록
 app.include_router(stock.router)
+app.include_router(weather.router)
 
